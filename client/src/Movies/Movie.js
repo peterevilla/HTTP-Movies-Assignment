@@ -5,6 +5,7 @@ import MovieCard from "./MovieCard";
 
 function Movie({ addToSavedList }) {
   const [movie, setMovie] = useState(null);
+  const [isDeleted, setIsDeleted] = useState(false);
   const params = useParams();
 
   const fetchMovie = (id) => {
@@ -22,8 +23,22 @@ function Movie({ addToSavedList }) {
     fetchMovie(params.id);
   }, [params.id]);
 
+  const deleteMovie = (id) => {
+    axios
+      .delete(`http://localhost:5000/api/movies/${id}`)
+      .then((res) => {
+        console.log(res);
+        setIsDeleted(true);
+      })
+      .catch((err) => console.log(err));
+  };
+
   if (!movie) {
     return <div>Loading movie information...</div>;
+  }
+
+  if (isDeleted) {
+    return <h1>Movie Deleted</h1>;
   }
 
   return (
@@ -33,6 +48,9 @@ function Movie({ addToSavedList }) {
       <div className="save-button" onClick={saveMovie}>
         Save
       </div>
+      <button onClick={() => deleteMovie(params.id)} className="delete-button">
+        delete
+      </button>
     </div>
   );
 }
